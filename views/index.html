@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta
+            name="viewport"
+            content="width=device-width, maximum-scale=1.0, minimum-scale=1.0, initial-scale=1.0"
+        />
+        <meta charset="utf-8" />
+        <title><%= htmlWebpackPlugin.options.title %></title>
+        <% for (var css in htmlWebpackPlugin.files.css) { %>
+        <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[css] %>" />
+        <% } %>
+    </head>
+    <body>
+        <section id="app"><!-- vue-ssr-outlet --></section>
+        <% for (var chunk in htmlWebpackPlugin.files.chunks) { %>
+        <script
+            src="<%= htmlWebpackPlugin.files.chunks[chunk].entry %>"
+            async
+            defer
+        ></script>
+        <% } %>
+    </body>
+</html>
