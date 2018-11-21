@@ -1,10 +1,3 @@
-import '../audio/film.mp3';
-import '../audio/record.mp3';
-import '../audio/typing.mp3';
-import '../audio/terminal.mp3';
-import '../audio/humming.mp3';
-import '../audio/border-button.mp3';
-
 export default class AudioHandler {
     /**
      * This class is responsible for preloading sound clips, and playing them as requested.
@@ -20,14 +13,7 @@ export default class AudioHandler {
          * @memberOf AudioHandler
          * @type {object}
          */
-        this.audioFiles = {
-            film: './audio/film.mp3',
-            record: './audio/record.mp3',
-            humming: './audio/humming.mp3',
-            typing: './audio/typing.mp3',
-            terminal: './audio/terminal.mp3',
-            borderButton: './audio/border-button.mp3'
-        };
+        this.audioFiles = {};
 
         /**
          * This object will keep track of what volume sounds should be played at if sound is muted, in case it gets unmuted again.
@@ -60,9 +46,13 @@ export default class AudioHandler {
          * @type {number}
          */
         this.fileCounter = 0;
-        /*for (const i in this.audioFiles) {
-            this.preload(i, this.audioFiles[i]);
-        }*/
+
+        /*
+         *for (const i in this.audioFiles) {
+         * this.preload(i, this.audioFiles[i]);
+         *}
+         */
+        this.loadedEvent = new Event('clip_loaded');
     }
 
     /**
@@ -74,6 +64,7 @@ export default class AudioHandler {
      * @returns {void}
      */
     preload(clip, url) {
+        this.audioFiles[clip] = url;
         const audio = new Audio();
         audio.addEventListener('canplaythrough', this.loaded(clip, url));
         audio.src = url;
@@ -90,7 +81,6 @@ export default class AudioHandler {
      */
     loaded(clip, url) {
         this.fileCounter += 1;
-
         const audio = new Audio();
         audio.loop = true;
         const source = document.createElement('source');
@@ -99,11 +89,10 @@ export default class AudioHandler {
         audio.appendChild(source);
         audio.volume = 0;
         this.audioFiles[clip] = audio;
-
         if (this.fileCounter === Object.keys(this.audioFiles).length) {
             this.ready = true;
+            document.dispatchEvent(this.loadedEvent);
         }
-        return true;
     }
 
     /**
@@ -114,7 +103,7 @@ export default class AudioHandler {
      * @param {decimal} volume The volume that the clip should be played at.
      * @returns {void}
      */
-    play(clip, volume) {
+    play(clip, volume = 1) {
         if (typeof this.audioFiles[clip] !== 'undefined') {
             if (!this.muted) {
                 this.audioFiles[clip].volume = volume;
@@ -135,8 +124,7 @@ export default class AudioHandler {
      * @returns {void}
      */
     pause(clip) {
-        typeof this.audioFiles[clip] !== 'undefined' &&
-            this.audioFiles[clip].pause();
+        typeof this.audioFiles[clip] !== 'undefined' && this.audioFiles[clip].pause();
     }
 
     /**

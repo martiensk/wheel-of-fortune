@@ -1,5 +1,5 @@
 <template>
-    <section v-if="progress < 100">
+    <section v-if="actualWidth < 100">
         <div>
             <div ref="loader" class="loader"></div>
         </div>
@@ -18,20 +18,37 @@ export default {
             default: 0
         }
     },
+    data() {
+        return { actualWidth: 0 };
+    },
     watch: {
         progress(val) {
             const progressWidth = this.$refs.loader.parentElement.offsetWidth * (this.progress / 100);
-            TweenMax.to(this.$refs.loader, 0.6, { width: progressWidth });
+            TweenMax.to(this.$refs.loader, 0.6, {
+                width: progressWidth,
+                onComplete: () => {
+                    this.actualWidth = this.progress;
+                    if (this.actualWidth >= 100) {
+                        this.$emit('loaded');
+                    }
+                }
+            });
         }
     }
 };
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 @import '../../styles/responsive.scss';
 
 section {
     width: 80%;
+    height: 100%;
+    margin: 0 auto;
     text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 
 span {
@@ -40,6 +57,7 @@ span {
     color: #fff;
     font-weight: bold;
     text-shadow: 1px 1px 1px #000;
+    font-family: 'marvin', sans-serif;
 }
 
 div {
