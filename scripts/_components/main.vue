@@ -4,15 +4,18 @@
         <!--img v-for="img in images" :src="img.src" /-->
         <div v-show="hasLoaded">
             <h1>spinner winner</h1>
-            <h2>Roll up... guaranteed prizes</h2>
+            <h2 class="top-text">Roll up... guaranteed prizes</h2>
             <div ref="wheel" id="wheel"></div>
-            <button  @click="spin">Spin the wheel</button>
+            <div class="button-container">
+                <button  @click="claim">Spin the wheel</button>
+                <h2 class="bottom-text">What will you win?</h2>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
-import { TweenMax, Circ, TimelineMax } from 'gsap';
+import { TweenMax, Circ, Elastic, TimelineMax } from 'gsap';
 import Loader from './loader';
 import AudioHandler from '../audioHandler';
 import '../../images/wheel.png';
@@ -22,6 +25,20 @@ import '../../audio/chime.mp3';
 import '../../audio/coins.mp3';
 import '../../audio/spinning.mp3';
 import '../../audio/theme.mp3';
+
+// Whole lot of shitty imports that should be dynamic
+import '../../images/gbp250.png';
+import '../../images/gbp1000.png';
+import '../../images/mm20.png';
+import '../../images/mm30.png';
+import '../../images/mm40.png';
+import '../../images/mmbogof.png';
+import '../../images/mmfree.png';
+import '../../images/pb20.png';
+import '../../images/pb30.png';
+import '../../images/pb40.png';
+import '../../images/pbbogof.png';
+import '../../images/pbfree.png';
 
 let audio = new AudioHandler();
 
@@ -34,7 +51,8 @@ export default {
             hasLoaded: false,
             images: {},
             interacted: false,
-            prize: 0
+            prize: 0,
+            spun: false
         };
     },
     methods: {
@@ -42,6 +60,9 @@ export default {
             this.hasLoaded = true;
             this.images.arrow.id = 'arrow';
             this.$refs.wheel.appendChild(this.images.wheel);
+            this.images.prize.classList.add('prize-image');
+            TweenMax.set(this.images.prize, { autoAlpha: 0, scale: 0 });
+            this.$refs.wheel.appendChild(this.images.prize);
             this.$refs.wheel.appendChild(this.images.arrow);
         },
         addImage(img, name, increment) {
@@ -55,31 +76,86 @@ export default {
                 audio.play('theme', 0.3);
             }
         },
+        claim() {
+            if (!this.spun) {
+                this.spin();
+                this.spun = true;
+                return;
+            }
+            alert('Offer claimed');
+        },
         spin() {
+            const vol = { theme: 0.3 };
             const t = new TimelineMax();
-
-            TweenMax.to(this.images.wheel, 9, {
-                rotation: 720 + this.prize,
-                ease: Circ.easeOut,
-                onStart: () => {
-                    audio.repeat('chime', false);
-                    audio.repeat('coins', false);
-                    audio.repeat('spinning', false);
-                    audio.play('spinning');
-                },
-                onComplete: () => {
-                    audio.play('chime');
-                    audio.play('coins');
-                    let vol = { theme: 0.3 }; // eslint-disable-line
-                    TweenMax.to(vol, 2, {
-                        theme: '0',
-                        delay: 3,
-                        onUpdate: () => {
-                            audio.volume('theme', vol.theme);
+            t.set('.bottom-text', { autoAlpha: 0, display: 'block' })
+                .to('button', 0.5, {
+                    y: 10,
+                    boxShadow: '0 0px 0px rgba(0, 0, 0, 0)'
+                })
+                .to('button', 0.5, {
+                    y: 0,
+                    autoAlpha: 0
+                })
+                .to('.bottom-text', 0.5, { autoAlpha: 1 })
+                .to('#container h1', 0.4, { x: '-100%' }, 1)
+                .to('.top-text', 0.4, { autoAlpha: 0 }, 1)
+                .set('#container h1', {
+                    x: '0%',
+                    y: '-100%',
+                    innerText: 'Good Luck'
+                })
+                .to('#container h1', 0.6, { y: '0%', ease: Elastic.easeOut })
+                .to(this.images.wheel,
+                    9,
+                    {
+                        rotation: 720 + this.prize.ref,
+                        ease: Circ.easeOut,
+                        onStart: () => {
+                            audio.repeat('chime', false);
+                            audio.repeat('coins', false);
+                            audio.repeat('spinning', false);
+                            audio.play('spinning');
+                        },
+                        onComplete: () => {
+                            audio.play('chime');
+                            audio.play('coins');
                         }
-                    });
-                }
-            });
+                    },
+                    0)
+                .to('#container h1', 0.5, { autoAlpha: 0 }, 7.5)
+                .set('#container h1',
+                    {
+                        scale: 0,
+                        rotation: 356.5,
+                        innerText: 'congratulations'
+                    },
+                    7.6)
+                .set('button',
+                    {
+                        y: -50,
+                        innerText: 'claim',
+                        padding: '8px 44px',
+                        fontSize: '30px'
+                    },
+                    7.6)
+                .to('#container h1', 0.5, { autoAlpha: 1, scale: 1 }, 7.7)
+                .to('.bottom-text', 0.5, { autoAlpha: 0 }, 7.7)
+                .to('button',
+                    0.5,
+                    {
+                        autoAlpha: 1,
+                        y: 0,
+                        boxShadow: '0 10px 10px rgba(0,0,0,0.6)'
+                    },
+                    7.7)
+                .to(this.images.prize, 0.5, { autoAlpha: 1, scale: 1 })
+                .to(vol, 2, {
+                    theme: '0',
+                    delay: 3,
+                    onUpdate: () => {
+                        audio.volume('theme', vol.theme);
+                    }
+                });
         },
         interaction() {
             this.interacted = true;
@@ -91,13 +167,63 @@ export default {
     },
     mounted() {
         audio = new AudioHandler();
-        // Simulated AJAX call to retrieve prize rotation values
-        const prizes = [350, 9, 40, 90, 120];
-        this.prize = prizes[Math.floor(Math.random() * 5)];
+
+        /*
+         * Simulated AJAX call to retrieve prize rotation values
+         *const prizes = [350, 9, 40, 90, 120];
+         */
+        const prizes = [
+            {
+                prize: 'gbp1000',
+                ref: 350
+            },
+            {
+                prize: 'pbbogof',
+                ref: 318
+            },
+            {
+                prize: 'mm40',
+                ref: 270
+            },
+            {
+                prize: 'pbfree',
+                ref: 238.5
+            },
+            {
+                prize: 'pb30',
+                ref: 204.5
+            },
+            {
+                prize: 'mm20',
+                ref: 153.5
+            },
+            {
+                prize: 'gbp250',
+                ref: 121.5
+            },
+            {
+                prize: 'pb20',
+                ref: 88.5
+            },
+            {
+                prize: 'mmbogof',
+                ref: 39.5
+            },
+            {
+                prize: 'mmfree',
+                ref: 8.5
+            }
+        ];
+        this.prize = prizes[Math.floor(Math.random() * prizes.length)];
         // Simulation end
         const assets = [
             { type: 'image', url: '/images/wheel.png', name: 'wheel' },
             { type: 'image', url: '/images/arrow.png', name: 'arrow' },
+            {
+                type: 'image',
+                url: `/images/${this.prize.prize}.png`,
+                name: 'prize'
+            },
             { type: 'font', url: '/fonts/marvin-webfont.woff', name: 'marvin' },
             { type: 'audio', url: '/audio/chime.mp3', name: 'chime' },
             { type: 'audio', url: '/audio/coins.mp3', name: 'coins' },
@@ -187,6 +313,7 @@ h1 {
     text-shadow: -2px 2px 0 rgba(0, 0, 0, 0.5);
     transform: rotate(358.5deg);
     margin-top: 32px;
+    font-size: 28px;
 }
 
 h2 {
@@ -201,11 +328,33 @@ button {
     border-radius: 30px;
     padding: 12px 32px;
     font-size: 24px;
-    margin-top: 32px;
     box-shadow: 0 10px 10px rgba(0, 0, 0, 0.6);
+    display: block;
+    margin: 0 auto;
 
     &:focus {
         outline: 0;
     }
+}
+
+.button-container {
+    position: relative;
+    margin-top: 32px;
+}
+
+.bottom-text {
+    display: none;
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    text-align: center;
+}
+
+.prize-image {
+    position: absolute;
+    top: 17px;
+    left: 17px;
+    height: 266px;
+    width: 266px;
 }
 </style>
