@@ -1,7 +1,6 @@
 export default class AudioHandler {
     /**
      * This class is responsible for preloading sound clips, and playing them as requested.
-     * On initialisation the constructor starts preloading a predefined list of audio clips.
      * @class AudioHandler
      * @author Martiens Kropff
      * @returns {void}
@@ -113,6 +112,25 @@ export default class AudioHandler {
             }
             this.audioFiles[clip].play();
             this.audioFiles[clip].currentTime = 0;
+        }
+    }
+
+    /**
+     * Sets the volume of an audio clip.
+     * @author Martiens Kropff
+     * @memberOf AudioHandler
+     * @param {string} clip The clip with the offensive volume.
+     * @param {decimal} volume The volume that the clip should be played at.
+     * @returns {void}
+     */
+    volume(clip, volume) {
+        if (typeof this.audioFiles[clip] !== 'undefined') {
+            if (!this.muted) {
+                this.audioFiles[clip].volume = volume;
+            } else {
+                this.muteVolumes[clip] = volume;
+                this.audioFiles[clip].volume = 0;
+            }
         }
     }
 

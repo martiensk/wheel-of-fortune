@@ -5,13 +5,14 @@
         <div v-show="hasLoaded">
             <h1>spinner winner</h1>
             <h2>Roll up... guaranteed prizes</h2>
-            <div ref="wheel" id="wheel" @click="spin"></div>
+            <div ref="wheel" id="wheel"></div>
+            <button  @click="spin">Spin the wheel</button>
         </div>
     </div>
 </template>
 
 <script>
-import { TweenMax, Circ, Elastic } from 'gsap';
+import { TweenMax, Circ, TimelineMax } from 'gsap';
 import Loader from './loader';
 import AudioHandler from '../audioHandler';
 import '../../images/wheel.png';
@@ -22,7 +23,7 @@ import '../../audio/coins.mp3';
 import '../../audio/spinning.mp3';
 import '../../audio/theme.mp3';
 
-const audio = new AudioHandler();
+let audio = new AudioHandler();
 
 export default {
     name: 'Main',
@@ -51,18 +52,31 @@ export default {
             if (!this.interacted) {
                 window.requestAnimationFrame(this.playMainTheme);
             } else {
-                audio.play('theme');
+                audio.play('theme', 0.3);
             }
         },
         spin() {
-            TweenMax.to(this.images.wheel, 5, {
+            const t = new TimelineMax();
+
+            TweenMax.to(this.images.wheel, 9, {
                 rotation: 720 + this.prize,
                 ease: Circ.easeOut,
+                onStart: () => {
+                    audio.repeat('chime', false);
+                    audio.repeat('coins', false);
+                    audio.repeat('spinning', false);
+                    audio.play('spinning');
+                },
                 onComplete: () => {
-                    TweenMax.to(this.images.wheel, 1, {
-                        rotation: 0,
-                        ease: Elastic.easeOut,
-                        delay: 1
+                    audio.play('chime');
+                    audio.play('coins');
+                    let vol = { theme: 0.3 }; // eslint-disable-line
+                    TweenMax.to(vol, 2, {
+                        theme: '0',
+                        delay: 3,
+                        onUpdate: () => {
+                            audio.volume('theme', vol.theme);
+                        }
                     });
                 }
             });
@@ -76,6 +90,7 @@ export default {
         }
     },
     mounted() {
+        audio = new AudioHandler();
         // Simulated AJAX call to retrieve prize rotation values
         const prizes = [350, 9, 40, 90, 120];
         this.prize = prizes[Math.floor(Math.random() * 5)];
@@ -139,6 +154,7 @@ export default {
     width: 100%;
     border-radius: 0;
     text-align: center;
+    color: #fff;
 
     @include desktop {
         width: 550px;
@@ -149,6 +165,7 @@ export default {
 #wheel {
     height: 300px;
     width: 300px;
+    margin-top: 32px;
 }
 
 img {
@@ -162,5 +179,33 @@ img {
     height: 50px;
     left: calc(50% - 25px);
     top: -5px;
+}
+
+h1 {
+    font-family: 'marvin', sans-serif;
+    letter-spacing: 2px;
+    text-shadow: -2px 2px 0 rgba(0, 0, 0, 0.5);
+    transform: rotate(358.5deg);
+    margin-top: 32px;
+}
+
+h2 {
+    font-weight: lighter;
+    font-size: 20px;
+}
+
+button {
+    font-family: 'marvin', sans-serif;
+    background: #feda29;
+    border: 0;
+    border-radius: 30px;
+    padding: 12px 32px;
+    font-size: 24px;
+    margin-top: 32px;
+    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.6);
+
+    &:focus {
+        outline: 0;
+    }
 }
 </style>
