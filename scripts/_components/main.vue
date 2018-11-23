@@ -97,14 +97,14 @@ export default {
                     autoAlpha: 0
                 })
                 .to('.bottom-text', 0.5, { autoAlpha: 1 })
-                .to('#container h1', 0.4, { x: '-100%' }, 1)
+                .to('#container h1', 0.4, { x: '-150%' }, 1)
                 .to('.top-text', 0.4, { autoAlpha: 0 }, 1)
                 .set('#container h1', {
                     x: '0%',
                     y: '-100%',
                     innerText: 'Good Luck'
                 })
-                .to('#container h1', 0.6, { y: '0%', ease: Elastic.easeOut })
+                .to('#container h1', 0.6, { y: '10%', ease: Elastic.easeOut })
                 .to(this.images.wheel,
                     9,
                     {
@@ -281,10 +281,15 @@ export default {
     border-radius: 0;
     text-align: center;
     color: #fff;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 
-    @include desktop {
-        width: 550px;
-        height: 680px;
+    @include tablet {
+        width: 475px;
+        height: 600px;
     }
 }
 
@@ -292,6 +297,13 @@ export default {
     height: 300px;
     width: 300px;
     margin-top: 32px;
+    position: relative;
+
+    @include mobile {
+        height: 340px;
+        width: 340px;
+        margin-top: 16px;
+    }
 }
 
 img {
@@ -312,13 +324,21 @@ h1 {
     letter-spacing: 2px;
     text-shadow: -2px 2px 0 rgba(0, 0, 0, 0.5);
     transform: rotate(358.5deg);
-    margin-top: 32px;
     font-size: 28px;
+
+    @include mobile {
+        text-shadow: -3px 3px 0 rgba(0, 0, 0, 0.5);
+        font-size: 32px;
+    }
 }
 
 h2 {
     font-weight: lighter;
     font-size: 20px;
+
+    @include mobile {
+        font-size: 22px;
+    }
 }
 
 button {
@@ -334,6 +354,10 @@ button {
 
     &:focus {
         outline: 0;
+    }
+
+    @include mobile {
+        font-size: 26px;
     }
 }
 
@@ -356,5 +380,12 @@ button {
     left: 17px;
     height: 266px;
     width: 266px;
+
+    @include mobile {
+        top: 20px;
+        left: 20px;
+        height: 300px;
+        width: 300px;
+}
 }
 </style>
