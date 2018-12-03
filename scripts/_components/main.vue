@@ -18,27 +18,6 @@
 import { TweenMax, Circ, Elastic, TimelineMax } from 'gsap';
 import Loader from './loader';
 import AudioHandler from '../audioHandler';
-import '../../images/wheel.png';
-import '../../images/arrow.png';
-import '../../fonts/marvin-webfont.woff';
-import '../../audio/chime.mp3';
-import '../../audio/coins.mp3';
-import '../../audio/spinning.mp3';
-import '../../audio/theme.mp3';
-
-// Whole lot of shitty imports that should be dynamic
-import '../../images/gbp250.png';
-import '../../images/gbp1000.png';
-import '../../images/mm20.png';
-import '../../images/mm30.png';
-import '../../images/mm40.png';
-import '../../images/mmbogof.png';
-import '../../images/mmfree.png';
-import '../../images/pb20.png';
-import '../../images/pb30.png';
-import '../../images/pb40.png';
-import '../../images/pbbogof.png';
-import '../../images/pbfree.png';
 
 let audio = new AudioHandler();
 
