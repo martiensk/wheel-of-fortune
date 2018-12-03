@@ -1,10 +1,10 @@
 <template>
-    <section v-if="actualWidth < 100">
+    <div class="loader" v-if="actualWidth < 100">
         <div>
             <div ref="loader" class="loader"></div>
         </div>
         <span>Loading...</span>
-    </section>
+    </div>
 </template>
 
 <script>
@@ -40,7 +40,7 @@ export default {
 <style lang="scss">
 @import '../../styles/responsive.scss';
 
-section {
+.loader {
     width: 80%;
     height: 100%;
     margin: 0 auto;
@@ -49,33 +49,33 @@ section {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-}
 
-span {
-    margin-top: 8px;
-    display: inline-block;
-    color: #fff;
-    font-weight: bold;
-    text-shadow: 1px 1px 1px #000;
-    font-family: 'marvin', sans-serif;
-}
+    span {
+        margin-top: 8px;
+        display: inline-block;
+        color: #fff;
+        font-weight: bold;
+        text-shadow: 1px 1px 1px #000;
+        font-family: 'marvin', sans-serif;
+    }
 
-div {
-    width: 100%;
-    height: 20px;
-    border-radius: 5px;
-    margin: 0 auto;
-    position: relative;
-    background: transparent;
+    div {
+        width: 100%;
+        height: 20px;
+        border-radius: 5px;
+        margin: 0 auto;
+        position: relative;
+        background: transparent;
 
-    .loader {
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 100%;
-        background: #fff;
-        width: 0;
-        box-shadow: 1px 1px 1px #000;
+        .loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: #fff;
+            width: 0;
+            box-shadow: 1px 1px 1px #000;
+        }
     }
 }
 </style>
