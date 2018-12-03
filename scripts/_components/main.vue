@@ -18,27 +18,32 @@
 import { TweenMax, Circ, Elastic, TimelineMax } from 'gsap';
 import Loader from './loader';
 import AudioHandler from '../audioHandler';
-import '../../images/wheel.png';
-import '../../images/arrow.png';
-import '../../fonts/marvin-webfont.woff';
-import '../../audio/chime.mp3';
-import '../../audio/coins.mp3';
-import '../../audio/spinning.mp3';
-import '../../audio/theme.mp3';
 
-// Whole lot of shitty imports that should be dynamic
-import '../../images/gbp250.png';
-import '../../images/gbp1000.png';
-import '../../images/mm20.png';
-import '../../images/mm30.png';
-import '../../images/mm40.png';
-import '../../images/mmbogof.png';
-import '../../images/mmfree.png';
-import '../../images/pb20.png';
-import '../../images/pb30.png';
-import '../../images/pb40.png';
-import '../../images/pbbogof.png';
-import '../../images/pbfree.png';
+/*
+ *import '../../images/wheel.png';
+ *import '../../images/arrow.png';
+ *import '../../fonts/marvin-webfont.woff';
+ *import '../../audio/chime.mp3';
+ *import '../../audio/coins.mp3';
+ *import '../../audio/spinning.mp3';
+ *import '../../audio/theme.mp3';
+ */
+
+/*
+ * Whole lot of shitty imports that should be dynamic
+ *import '../../images/gbp250.png';
+ *import '../../images/gbp1000.png';
+ *import '../../images/mm20.png';
+ *import '../../images/mm30.png';
+ *import '../../images/mm40.png';
+ *import '../../images/mmbogof.png';
+ *import '../../images/mmfree.png';
+ *import '../../images/pb20.png';
+ *import '../../images/pb30.png';
+ *import '../../images/pb40.png';
+ *import '../../images/pbbogof.png';
+ *import '../../images/pbfree.png';
+ */
 
 let audio = new AudioHandler();
 
@@ -215,20 +220,23 @@ export default {
             }
         ];
         this.prize = prizes[Math.floor(Math.random() * prizes.length)];
+        const imageUrl = 'https://res.cloudinary.com/dzn0bpi9a/image/upload/v1542973760/Seb%20special%20game/';
+        const fontUrl = 'https://res.cloudinary.com/dzn0bpi9a/raw/upload/v1542973760/Seb%20special%20game/';
+        const soundUrl = 'https://res.cloudinary.com/dzn0bpi9a/video/upload/v1542973760/Seb%20special%20game/';
         // Simulation end
         const assets = [
-            { type: 'image', url: '/images/wheel.png', name: 'wheel' },
-            { type: 'image', url: '/images/arrow.png', name: 'arrow' },
+            { type: 'image', url: `${imageUrl}wheel.png`, name: 'wheel' },
+            { type: 'image', url: `${imageUrl}arrow.png`, name: 'arrow' },
             {
                 type: 'image',
-                url: `/images/${this.prize.prize}.png`,
+                url: `${imageUrl}${this.prize.prize}.png`,
                 name: 'prize'
             },
-            { type: 'font', url: '/fonts/marvin-webfont.woff', name: 'marvin' },
-            { type: 'audio', url: '/audio/chime.mp3', name: 'chime' },
-            { type: 'audio', url: '/audio/coins.mp3', name: 'coins' },
-            { type: 'audio', url: '/audio/spinning.mp3', name: 'spinning' },
-            { type: 'audio', url: '/audio/theme.mp3', name: 'theme' }
+            { type: 'font', url: `${fontUrl}marvin-webfont.woff`, name: 'marvin' },
+            { type: 'audio', url: `${soundUrl}chime.mp3`, name: 'chime' },
+            { type: 'audio', url: `${soundUrl}coins.mp3`, name: 'coins' },
+            { type: 'audio', url: `${soundUrl}spinning.mp3`, name: 'spinning' },
+            { type: 'audio', url: `${soundUrl}theme.mp3`, name: 'theme' }
         ];
         const increment = 100 / assets.length;
         document.addEventListener('clip_loaded', () => {
